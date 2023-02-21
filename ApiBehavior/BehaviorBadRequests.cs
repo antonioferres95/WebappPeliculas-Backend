@@ -11,7 +11,7 @@ namespace backend.ApiBehavior
                 foreach (var llave in actionContext.ModelState.Keys)
                 {
                     {
-                        foreach (var error in actionContext.ModelState[llave].Errors)
+                        foreach (var error in actionContext.ModelState[llave]!.Errors)
                         {
                             response.Add($"{llave}: {error.ErrorMessage}");
                         }

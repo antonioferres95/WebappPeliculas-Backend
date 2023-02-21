@@ -8,11 +8,14 @@ using AutoMapper;
 using backend.Entidades;
 using backend.DTOs;
 using backend.Utilidades;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace backend.Controllers
 {   
     [ApiController]
     [Route("api/generos")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     public class GenerosController: ControllerBase
     {
         private readonly ILogger<GenerosController> logger;
@@ -32,7 +35,7 @@ namespace backend.Controllers
         [HttpGet] //Con paginacion
         public async Task<ActionResult<List<GeneroDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO) 
         {
-            var queryable = context.Generos.AsQueryable();
+            var queryable = context.Generos!.AsQueryable();
             await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable); 
             var generos = await queryable.OrderBy((x) => x.nombre).Paginar(paginacionDTO).ToListAsync();
             return mapper.Map<List<GeneroDTO>>(generos); //Pasa del tipo Genero a GeneroDTO,
@@ -40,9 +43,10 @@ namespace backend.Controllers
         }
 
         [HttpGet("todos")] //Sin paginacion
+        [AllowAnonymous]
         public async Task<ActionResult<List<GeneroDTO>>> Todos() 
         {
-            var generos = await context.Generos.OrderBy((x) => x.nombre).ToListAsync();
+            var generos = await context.Generos!.OrderBy((x) => x.nombre).ToListAsync();
             return mapper.Map<List<GeneroDTO>>(generos);
         }
 
@@ -50,7 +54,7 @@ namespace backend.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<GeneroDTO>> Get(int id)                                                                           
         {
-            var genero = await context.Generos.FirstOrDefaultAsync((x) => x.id == id);
+            var genero = await context.Generos!.FirstOrDefaultAsync((x) => x.id == id);
             if(genero == null)
             {
                 return NotFound();
@@ -73,7 +77,7 @@ namespace backend.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] GeneroCreacionDTO generoCreacionDTO)
         {
-            var genero = await context.Generos.FirstOrDefaultAsync((x) => x.id == id);
+            var genero = await context.Generos!.FirstOrDefaultAsync((x) => x.id == id);
             if(genero == null)
             {
                 return NotFound();
@@ -89,7 +93,7 @@ namespace backend.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var genero = await context.Generos.FirstOrDefaultAsync((x) => x.id == id);
+            var genero = await context.Generos!.FirstOrDefaultAsync((x) => x.id == id);
             if(genero == null)
             {
                 return NotFound();

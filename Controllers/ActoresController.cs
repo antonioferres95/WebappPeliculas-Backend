@@ -8,10 +8,13 @@ using AutoMapper;
 using backend.Entidades;
 using backend.DTOs;
 using backend.Utilidades;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace backend.Controllers
 {   
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "EsAdmin")]
     [Route("api/actores")]
     public class ActoresController: ControllerBase
     {
@@ -36,7 +39,7 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<ActionResult<List<ActorDTO>>> Get([FromQuery] PaginacionDTO paginacionDTO) 
         {
-            var queryable = context.Actores.AsQueryable();
+            var queryable = context.Actores!.AsQueryable();
             await HttpContext.InsertarParametrosPaginacionEnCabecera(queryable); 
             var actores = await queryable.OrderBy((x) => x.nombre).Paginar(paginacionDTO).ToListAsync();
             return mapper.Map<List<ActorDTO>>(actores); //Pasa del tipo Actor a ActorDTO,
@@ -46,7 +49,7 @@ namespace backend.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<ActorDTO>> Get(int id)                                                                           
         {
-            var actor = await context.Actores.FirstOrDefaultAsync((x) => x.id == id);
+            var actor = await context.Actores!.FirstOrDefaultAsync((x) => x.id == id);
             if(actor == null)
             {
                 return NotFound();
@@ -61,8 +64,8 @@ namespace backend.Controllers
         public async Task<ActionResult<List<PeliculaActorDTO>>> BuscarPorNombre(string nombre = "")
         {
             if(string.IsNullOrWhiteSpace(nombre)) {return new List<PeliculaActorDTO>();}
-            return await context.Actores
-                .Where((x) => x.nombre.Contains(nombre))
+            return await context.Actores!
+                .Where((x) => x.nombre!.Contains(nombre))
                 .OrderBy((x) => x.nombre)
                 .Select((x) => new PeliculaActorDTO {id=x.id, nombre=x.nombre, foto=x.foto})
                 .Take(5)
@@ -87,7 +90,7 @@ namespace backend.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult> Put(int id, [FromBody] ActorCreacionDTO actorCreacionDTO)
         {
-            var actor = await context.Actores.FirstOrDefaultAsync((x) => x.id == id);
+            var actor = await context.Actores!.FirstOrDefaultAsync((x) => x.id == id);
             if(actor == null)
             {
                 return NotFound();
@@ -98,7 +101,7 @@ namespace backend.Controllers
 
                 if (actorCreacionDTO.foto != null)
                 {
-                    actor.foto = await almacenadorArchivos.EditarArchivo(actor.foto, contenedor, actorCreacionDTO.foto);
+                    actor.foto = await almacenadorArchivos.EditarArchivo(actor.foto!, contenedor, actorCreacionDTO.foto);
                 }
 
                 await context.SaveChangesAsync();
@@ -109,7 +112,7 @@ namespace backend.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var actor = await context.Actores.FirstOrDefaultAsync((x) => x.id == id);
+            var actor = await context.Actores!.FirstOrDefaultAsync((x) => x.id == id);
             if(actor == null)
             {
                 return NotFound();

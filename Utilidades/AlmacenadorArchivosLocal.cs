@@ -56,7 +56,7 @@ namespace backend.Utilidades
                 await File.WriteAllBytesAsync(ruta, contenido);
             }
 
-            var urlActual = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}";
+            var urlActual = $"{httpContextAccessor.HttpContext!.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}";
             var rutaParaDB = Path.Combine(urlActual, contenedor, nombreArchivo).Replace("\\","/");
             return rutaParaDB;
         }

@@ -1,6 +1,7 @@
 using AutoMapper;
 using backend.DTOs;
 using backend.Entidades;
+using Microsoft.AspNetCore.Identity;
 
 namespace backend.Utilidades
 {
@@ -42,7 +43,7 @@ namespace backend.Utilidades
             {
                 foreach (var genero in pelicula.peliculasGeneros)
                 {
-                    resultado.Add(new GeneroDTO() {id=genero.generoId, nombre=genero.genero.nombre} );
+                    resultado.Add(new GeneroDTO() {id=genero.generoId, nombre=genero.genero!.nombre} );
                 }
             }
 
@@ -60,7 +61,7 @@ namespace backend.Utilidades
                     resultado.Add(new PeliculaActorDTO()
                     {
                         id=actorPeliculas.actorId,
-                        nombre=actorPeliculas.actor.nombre,
+                        nombre=actorPeliculas.actor!.nombre,
                         foto=actorPeliculas.actor.foto,
                         orden=actorPeliculas.orden,
                         personaje=actorPeliculas.personaje
@@ -89,6 +90,8 @@ namespace backend.Utilidades
             CreateMap<Pelicula, PeliculaDTO>()
                 .ForMember((x) => x.generos, options => options.MapFrom(MapearPeliculasGeneros))
                 .ForMember((x) => x.actores, options => options.MapFrom(MapearPeliculasActores));
+            
+            CreateMap<IdentityUser, UsuarioDTO>();
         }
     }
 }

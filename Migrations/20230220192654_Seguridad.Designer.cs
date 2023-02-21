@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend;
 
@@ -10,9 +11,11 @@ using backend;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230220192654_Seguridad")]
+    partial class Seguridad
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -316,30 +319,6 @@ namespace backend.Migrations
                     b.ToTable("PeliculasGeneros");
                 });
 
-            modelBuilder.Entity("backend.Entidades.Rating", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<int>("peliculaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("puntuacion")
-                        .HasColumnType("int");
-
-                    b.Property<string>("usuarioId")
-                        .HasColumnType("varchar(255)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("peliculaId");
-
-                    b.HasIndex("usuarioId");
-
-                    b.ToTable("Ratings");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -427,23 +406,6 @@ namespace backend.Migrations
                     b.Navigation("genero");
 
                     b.Navigation("pelicula");
-                });
-
-            modelBuilder.Entity("backend.Entidades.Rating", b =>
-                {
-                    b.HasOne("backend.Entidades.Pelicula", "pelicula")
-                        .WithMany()
-                        .HasForeignKey("peliculaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "usuario")
-                        .WithMany()
-                        .HasForeignKey("usuarioId");
-
-                    b.Navigation("pelicula");
-
-                    b.Navigation("usuario");
                 });
 
             modelBuilder.Entity("backend.Entidades.Actor", b =>

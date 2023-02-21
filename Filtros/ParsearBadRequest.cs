@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -21,15 +22,22 @@ namespace backend.Filtros
             {
                 var response = new List<string>();
                 var resultadoActual = context.Result as BadRequestObjectResult;
-                if(resultadoActual.Value is string)
+                if(resultadoActual!.Value is string)
                 {
-                    response.Add(resultadoActual.Value.ToString());
+                    response.Add(resultadoActual.Value.ToString()!);
+                }
+                else if (resultadoActual.Value is IEnumerable<IdentityError> errores)
+                {
+                    foreach (var error in errores)
+                    {
+                        response.Add(error.Description);
+                    }
                 }
                 else
                 {
                     foreach (var llave in context.ModelState.Keys)
                     {
-                        foreach (var error in context.ModelState[llave].Errors)
+                        foreach (var error in context.ModelState[llave]!.Errors)
                         {
                             response.Add($"{llave}: {error.ErrorMessage}");
                         }

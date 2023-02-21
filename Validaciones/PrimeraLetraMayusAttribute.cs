@@ -11,7 +11,7 @@ namespace backend.Validaciones
                 return ValidationResult.Success;
             }
 
-            var primeraLetra = value.ToString()[0].ToString(); //Extraigo la primera letra
+            var primeraLetra = value.ToString()![0].ToString(); //Extraigo la primera letra
 
             if (primeraLetra != primeraLetra.ToUpper())
             {

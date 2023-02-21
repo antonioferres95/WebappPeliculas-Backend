@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using backend.Entidades;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace backend
 {
-    public class ApplicationDbContext: DbContext
+    public class ApplicationDbContext: IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions options):base(options) { }
 
@@ -25,5 +26,6 @@ namespace backend
         public DbSet<Pelicula>? Peliculas {get; set;}
         public DbSet<PeliculasActores>? PeliculasActores {get; set;}
         public DbSet<PeliculasGeneros>? PeliculasGeneros {get; set;}
+        public DbSet<Rating>? Ratings {get; set;}
     }
 }
